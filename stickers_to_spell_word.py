@@ -1,4 +1,4 @@
-# exhaustive search backtracking 
+import math
 
 def can_complete(stickers, word):
     for char in word:
@@ -7,26 +7,28 @@ def can_complete(stickers, word):
     return True
 
 def stickers_to_spell_word(stickers, word):
-    if can_complete(stickers, word):
-        min_stickers = 0 
-        # exhaustive search
-        for sticker in stickers:
-            for char in sticker: 
-                if char in word:
-                    # make choice
-                    word = word.replace(char, "", 1)
-                    # backtrack
-                    if min_stickers < 1 + stickers_to_spell_word(stickers, word):
-                        # undo choice
-                        word = word + char
-                        return min_stickers
-                    else: 
-                        return 1 + stickers_to_spell_word(stickers, word)
-                else:
-                    continue
-    else: 
+    if word == "":
         return 0
-    return min_stickers
+    elif can_complete(stickers, word):
+        min_stickers = float("inf")
+        # exhaustive search + backtracking
+        for sticker in stickers:
+            new_word = word
+            for char in sticker: 
+                new_word = new_word.replace(char, "", 1)
+            
+            if new_word == word:
+                continue
+                
+            result = stickers_to_spell_word(stickers, new_word)
+
+            if result != float("inf"):
+                min_stickers = min(min_stickers, 1 + result)
+            
+        if min_stickers == float("inf"):
+            return -1
+        return min_stickers
+    return -1
                 
 print(stickers_to_spell_word(["with", "example", "science"], "thehat"))
 print(stickers_to_spell_word(["notice", "possible"], "basicbasic"))
